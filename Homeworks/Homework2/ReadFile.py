@@ -21,3 +21,6 @@ def Read(filename):
   file.close()
   data = np.genfromtxt(filename, dtype = None, names = True, skip_header = 3)
   return time, N, data
+
+Read(MW_000.txt)
+
