@@ -20,5 +20,4 @@ def Read(filename):
 
   file.close()
   data = np.genfromtxt(filename, dtype = None, names = True, skip_header = 3)
-  return time, N
-  #Full data array?
+  return time, N, data
