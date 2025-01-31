@@ -51,12 +51,3 @@ def ParticleInfo(filename, ptype, pN):
 
     return distance, velocity, mass
     #Retuns desired quantities
-
-distance, velocity, mass = ParticleInfo("MW_000.txt", 2, 100)
-print(ParticleInfo("MW_000.txt", 2, 100))
-#calling test cases and printing result
-
-distLY = distance.to(u.lyr)
-#Converts 3D distance to lightyears
-print(np.round(distLY, 3))
-#Prints distLY and rounds to 3 decimal places
