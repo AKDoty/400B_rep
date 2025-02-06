@@ -13,4 +13,3 @@ Outputs: total mass of component -> returns total mass [10^12 * Msun]
   -> return using np.round(finalmass, 3)
 '''
 
-
