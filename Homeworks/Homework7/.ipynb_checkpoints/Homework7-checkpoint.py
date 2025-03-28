@@ -1,14 +1,3 @@
-
-# # Homework 7 Template
-# 
-# Rixin Li & G . Besla
-# 
-# Make edits where instructed - look for "****", which indicates where you need to 
-# add code. 
-
-
-
-
 # import necessary modules
 # numpy provides powerful multi-dimensional arrays to hold and manipulate data
 import numpy as np
@@ -129,14 +118,6 @@ class M33AnalyticOrbit:
         Outputs: accel -> 'vector', acceleration vector from a Miyamoto-Nagai potential
         """
 
-        ### Acceleration **** follow the formula in the HW instructions
-        # AGAIN note that we want a VECTOR to be returned  (see Hernquist instructions)
-        # this can be tricky given that the z component is different than in the x or y directions. 
-        # we can deal with this by multiplying the whole thing by an extra array that accounts for the 
-        # differences in the z direction:
-        #  multiply the whle thing by :   np.array([1,1,ZSTUFF]) 
-        # where ZSTUFF are the terms associated with the z direction
-
         x, y, z = r
         r_d = self.rdisk
         z_d = self.rdisk/5
@@ -160,21 +141,14 @@ class M33AnalyticOrbit:
         Inputs: r -> 'vector', 3D position vector of M33
         Outputs: accel_tot -> 'vector', 3D vector of total acceleration of M33 because of M31
         """
-
-        ### Call the previous functions for the halo, bulge and disk
-        # **** these functions will take as inputs variable we defined in the initialization of the class like 
-        # self.rdisk etc. 
         
         accel_halo = self.HernquistAccel(self.Mhalo, self.rhalo, r)
         accel_bulge = self.HernquistAccel(self.Mbulge, self.rbulge, r)
         accel_disk = self.MiyamotoNagaiAccel(self.Mdisk, self.rdisk, r)
 
         sum = accel_halo + accel_bulge + accel_disk
-        
-            # return the SUM of the output of the acceleration functions - this will return a VECTOR 
+
         return sum
-    
-    
     
     def LeapFrog(self, dt, r, v): # take as input r and v, which are VECTORS. Assume it is ONE vector at a time
         """
@@ -192,10 +166,7 @@ class M33AnalyticOrbit:
         
         # predict the final velocity at the next timestep using the acceleration field at the rhalf position 
         vnew = v + (self.M31Accel(rhalf))*dt
-        
-        # predict the final position using the average of the current velocity and the final velocity
-        # this accounts for the fact that we don't know how the speed changes from the current timestep to the 
-        # next, so we approximate it using the average expected speed over the time interval dt. 
+
         rnew = rhalf + vnew*(dt/2)
         
         return rnew, vnew # **** return the new position and velcoity vectors
@@ -235,23 +206,150 @@ class M33AnalyticOrbit:
             # **** advance the time by one timestep, dt
             t = t + dt
             
-            # ***** advance the position and velocity using the LeapFrog scheme
-            # remember that LeapFrog returns a position vector and a velocity vector  
-            # as an example, if a function returns three vectors you would call the function and store 
-            # the variable like:     a,b,c = function(input)
             r, v = self.LeapFrog(dt, r, v)
             orbit[i] = t, *tuple(r), *tuple(v)
             
             # **** update counter i , where i is keeping track of the number of rows (i.e. the number of time steps)
             i += 1
         
-        
         # write the data to a file
         np.savetxt(self.filename, orbit, fmt = "%11.3f"*7, comments='#', 
                    header="{:>10s}{:>11s}{:>11s}{:>11s}{:>11s}{:>11s}{:>11s}"\
                    .format('t', 'x', 'y', 'z', 'vx', 'vy', 'vz'))
-        
-        # there is no return function
 
+#calling our class
+M33orbit = M33AnalyticOrbit('M33AnalyticOrbit.txt')
 
+#running integration
+M33orbit.OrbitIntegration(0, .1, 10)
+    #setting up parameters per hw instructions, all in Gyr
+#Graphing, using method from homework 6
+
+M31outfile = 'Orbit_M31.txt'
+M33outfile = 'Orbit_M33.txt'
+#Reading in data files
+
+M31data = np.genfromtxt(M31outfile, dtype = None, names = True, skip_header = 0, usecols = (0,1,2,3,4,5,6))
+M33data = np.genfromtxt(M33outfile, dtype = None, names = True, skip_header=0, usecols = (0,1,2,3,4,5,6))
+M33finalpos = np.genfromtxt('M33AnalyticOrbit.txt',dtype=None,names=True,skip_header=0,usecols=(0,1,2,3,4,5,6))
+
+def vecdifference(pos1, pos2, vel1, vel2):
+    '''
+    Function to compute the magnitude of the difference between two vectors
+    Inputs: pos1, pos2 -> (arrays) position vectors of 2 different galaxies
+            vel1, vel2 -> (arrays) velocity vectors of 2 different galaxies
+    Outputs: pmag, vmag -> (floats) magnitudes of position, velocity differences
+                                    between 2 galaxies
+    '''
+    px = pos2[0] - pos1[0]
+    py = pos2[1] - pos1[1]
+    pz = pos2[2] - pos1[2]
+    pmag = np.sqrt(px**2 + py**2 + pz**2) #magnitude of relative position difference
+    
+    vx = vel2[0] - vel1[0]
+    vy = vel2[1] - vel1[1]
+    vz = vel2[2] - vel1[2]
+    vmag = np.sqrt(vx**2 + vy**2 + vz**2) #magnitude of relative velocity difference
+
+    return pmag, vmag
+
+'''
+Use this function to compute the magnitude of the relative
+separation and velocity of M33 and M31.
+'''
+
+#Initializing lists for mag of relative separation
+sep33_31 = [] #M33 to M31
+#Initializing lists for mag of relative velocity
+vel33_31 = [] #M33 to M31
+#Need lists in order for time and relative magnitudes to have same dimension
+
+#Creating a for-loop to go through data, across the given range of snap_ids
+for i in range(len(M33data)):
+    #Defining pos & vel for M31
+    #Position
+    M31x = M31data[i][1]
+    M31y = M31data[i][2]
+    M31z = M31data[i][3]
+    M31pos = np.array([M31x, M31y, M31z])
+    #Velocity
+    M31vx = M31data[i][4]
+    M31vy = M31data[i][5]
+    M31vz = M31data[i][6]
+    M31vel = np.array([M31vx, M31vy, M31vz])
+    
+    #Defining pos & vel for M33
+    #Position
+    M33x = M33data[i][1]
+    M33y = M33data[i][2]
+    M33z = M33data[i][3]
+    M33pos = np.array([M33x, M33y, M33z])
+    #Velocity
+    M33vx = M33data[i][4]
+    M33vy = M33data[i][5]
+    M33vz = M33data[i][6]
+    M33vel = np.array([M33vx, M33vy, M33vz])
+    
+    pos3331, vel3331 = vecdifference(M33pos, M31pos, M33vel, M31vel)
+    sep33_31.append(pos3331)
+    vel33_31.append(vel3331)
+    #Appending each entry to our lists
+
+#Initializing lists for mag of final separation and velocity
+finalsep = []
+finalvel = []
+
+#Creating a for-loop to go through data
+for i in range(len(M33finalpos)):
+    #Defining pos & vel for M33
+    #Position
+    M33x = M33finalpos[i][1]
+    M33y = M33finalpos[i][2]
+    M33z = M33finalpos[i][3]
+    M33pos = np.array([M33x, M33y, M33z])
+    #Velocity
+    M33vx = M33finalpos[i][4]
+    M33vy = M33finalpos[i][5]
+    M33vz = M33finalpos[i][6]
+    M33vel = np.array([M33vx, M33vy, M33vz])
+
+    M33posmag = np.sqrt(M33pos[0]**2 + M33pos[1]**2 + M33pos[2]**2)
+    M33velmag = np.sqrt(M33vel[0]**2 + M33vel[1]**2 + M33vel[2]**2)
+
+    finalsep.append(M33posmag)
+    finalvel.append(M33velmag)
+    #Appending each entry to our lists
+
+time = np.genfromtxt(M33outfile, dtype = None, names = True, skip_header = 0, usecols = 0)
+#pulling time (column 0) from the output file
+
+fig = plt.figure(figsize = (10,10))  # sets the scale of the figure
+ax = plt.subplot(111)
+
+plt.plot(time[0:len(finalsep)], sep33_31[0:len(finalsep)], color = 'mediumorchid', linewidth = 3, label = 'simulated M33 - M31')
+plt.plot(time[0:len(finalsep)], finalsep, color = 'orange', linewidth = 3, label = 'analytic M33')
+
+plt.xlabel('Time (Gyr)', fontsize=18)
+plt.ylabel('Separation (kpc)', fontsize=18)
+
+plt.title('Separation vs time', fontsize=20)
+
+legend = ax.legend(loc = 'upper left', fontsize = 'x-large')
+plt.show()
+
+# Save to a file
+
+fig = plt.figure(figsize = (10,10))  # sets the scale of the figure
+ax = plt.subplot(111)
+
+plt.plot(time[0:len(finalvel)], vel33_31[0:len(finalvel)], color = 'mediumorchid', linewidth = 3, label = 'simulated M33 - M31')
+plt.plot(time[0:len(finalvel)], finalvel, color = 'orange', linewidth = 3, label = 'analytic M33')
+
+plt.xlabel('Time (Gyr)', fontsize=18)
+plt.ylabel('Velocity (kpc/s)', fontsize=18)
+
+plt.title('Velocity vs time', fontsize=20)
+
+legend = ax.legend(loc = 'lower left', fontsize = 'x-large')
+plt.show()
 
