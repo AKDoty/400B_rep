@@ -1,0 +1,73 @@
+
+\documentclass[linenumbers,trackchanges,twocolumn]{aastex7}
+
+\newcommand{\vdag}{(v)^\dagger}
+\newcommand\aastex{AAS\TeX}
+\newcommand\latex{La\TeX}
+
+\begin{document}
+
+\title{Impact of Dynamical Evolution of Galactic Mergers on Galaxy Morphology}
+\author[orcid=0000-0000-0000-0001,sname='North America']{Ava Doty}
+\affiliation{University of Arizona, Department of Astronomy}
+\email[show]{doty1@arizona.edu}
+
+\keywords{{Galaxy} --- \uat{Galaxy Evolution}{594} --- {Sersic Profiles} --- \uat{AGN}{16} --- \uat{Stellar Disk}{589} --- \uat{Stellar Bulge}{578} --- \uat{Major Merger}{608}}
+
+\section{Introduction} 
+
+The morphological classification of galaxies is intrinsically related to the interactions that the galaxy has experienced over its lifetime. One such possible interaction is a \textbf{major merger}, which occurs when "2 or more galaxies collide and their central black holes have merged \citep{Willman_2012}." When studying galaxy evolution, it is often more effective to examine the impacts of galactic mergers than observing a galaxy evolving independent of any disturbances. A galaxy's dynamical evolution during a merger with another galaxy reveals information about it's evolutionary track \citep{Brooks2016}.
+
+The connection between a galaxy’s evolutionary track and its morphology is “a fundamental question in the field of galaxy formation and evolution” \citep{Kannan2015}. A \textbf{galaxy} is "a gravitationally bound set of stars whose properties cannot be explained by a combination of baryons (gas, dust and stars) and Newton’s laws of gravity \citep{Willman_2012}." \textbf{Galaxy evolution} is a broad term that refers to the way a galaxy grows and changes over the course of its lifetime. One of the oldest methods used to classify galaxies, the Hubble sequence, is based on morphology. The Hubble sequence is based on the Hubble ‘tuning fork’, which distinguishes between a galaxy's spheroidal \textbf{bulge} and it's exponential \textbf{disk}. Within this bulge in an active galaxy is the \textbf{AGN}, or Active Galactic Nuclei. The AGN is "a central region of an active galaxy" and is where new stars are formed within active galaxies. A galaxy's stellar bulge is "a spheroidal region at the center of a galaxy which mostly contains old stars" as opposed to a galaxy's stellar disk, which is "the disk part of a galaxy."
+
+Gathering information based on the qualities of the bulge and disk are still extremely important today, and represent the crux of the issue surrounding morphology - what can a galaxy's morphology tell us about its past, present, and future? Our current understanding is that mergers are the origin of classical bulges (like those in an elliptical galaxy) and processes like gravitational instability are the origin of psuedo bulges (like those that align with disk-like profiles) \citep{Kannan2015}. Fig. 1 shows simulations of a primary galaxy being perturbed by a smaller companion galaxy. With time evolving from left to right, we see how the smaller galaxy disrupts the structure of the primary galaxy. From this simulation, we see the basics of how close tidal encounters interfere with existing structure and leave behind remnants that have an elliptical morphology.
+ 
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=1\linewidth]{Pardy.png}
+\caption{Time evolution of a primary galaxy's disk. At leftmost panel, companion galaxy has not yet been introduced. At 0.0 Myr primary galaxy has closest approach to its perturber. Note the strong effect the companion galaxy has on primary galaxy's morphology.\citep{Pardy2016}}
+\label{fig:general}
+\end{figure}
+
+A pressing open question relates to inconsistencies between models and observations. Observations show a sizeable amount of bulgeless galaxies \citep{Kannan2015}, but this does not align with the predicted findings consistent with the cold dark matter model that is used today.
+
+
+
+\section{This Project} \label{sec:style}
+
+In this paper, we will study the changing stellar surface density profile of the Milky Way (MW) and M31 as the two collide and eventually merge. In our simulation we will compare the density profiles of both the bulge and disk components.
+
+Data that we find based on the evolution of the bulge's density profile will give us information that addresses the uncertainty about the relatively high number of bulgeless galaxies. If the density profile of the bulge component decreases, it could indicate a correlation to the findings in external literature. 
+
+The overarching question within this field of study is about connecting how galaxy interactions impact morphological classifications of galaxies. Our study will show how the morphology of MW and M31 evolve, which will give us further information about the creation of bulgeless remnant galaxies. 
+
+
+\section{Methodology}
+
+The simulations in this paper come from \cite{van_der_Marel_2012}, which models the merging of the MW-M31-M33 system using collisionless N-body simulations and semi-analytic orbit integrations. An N-body simulation models the interactions of a dynamical system of N particles, setting a small set of initial conditions that can vary depending on what aspect of the simulation is of interest. The exact number of particles used throughout the simulations was based on a set of data determined in the paper, outlined in Table 1 \citep{van_der_Marel_2012}. There were three components of each galaxy in the simulation; the dark matter halo, stellar disk, and stellar bulge. 
+
+Because we are concerned with morphology, we are only investigating the visible components of each galaxy. Thus, the stellar disk and stellar bulge are the only relevant particle types. When choosing what resolution of simulation data to use, it is important to remember that a stellar density profile is just a distribution. Because the model is accounting for such a large scale of particles, there are no appreciable benefits for using HighRes data and LowRes is just as effective, so we will proceed using LowRes. 
+
+The most important calculation in this code is that of the \textbf{Sersic profile}:
+\begin{equation} \label{eq:1}
+    I(R) = I_0e^{-kR^{1/n}}
+\end{equation}
+The Sersic Profile is a specific stellar density function that describes how the intensity of a galaxy (I) varies with the distance from the galactic center (R). I$_0$ is the intensity at distance R = 0. n is the Sersic index, which controls the degree of curvature in the profile. The best fit values of n correspond to galaxy size and luminosity - a small n fits to a less centrally concentrated profile, while a large n fits with bigger and brighter galaxy profiles. For example, elliptical galaxies generally fit best to n = 4 while spiral galaxies generally fit approximately n = 1. 
+
+In practical computations, we actually employ a modified Sersic profile: 
+\begin{equation} \label{eq:2}
+    I(R_e) = I_ee^{-L((r/R_e)^{1/n}-1)}
+\end{equation}
+which describes effective intensity (I$_e$) accounting for an effective radius (R$_e$). R$_e$ is also called the half light radius, which is the 2D radius that contains half the light of the initial intensity. r is the true distance from the galactic center.
+
+The plots from our simulation will show a density profile, overlaid by a Sersic profile. The density profile will show how intensity changes with distance, and the steepness of that curve informs the Sersic profile, which is a smooth logarithmic curve. Based on how these distributions change we will have a new conception of what M31, MW, and their resulting merger remnant will look like over the course of multiple close encounters. 
+
+Based on early trials, I think we will find that changes are most prominent in the outer disks. It would make sense that regions of high concentration would be essentially unchanged after a merger, as the bulge is closest to the central supper-massive black holes which will always be surrounded by the highest intensity of light in the galaxy. The resulting increase of light in the disk should indicate that the galaxy has a more elliptical makeup now, because light is more evenly distributed radially. 
+
+
+\bibliography{references}{}
+\bibliographystyle{aasjournalv7}
+
+\end{document}
+
+% End of file `sample7.tex'.
