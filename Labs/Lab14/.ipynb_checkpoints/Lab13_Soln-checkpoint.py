@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 # tool for numerical integration from SciPy  
-from scipy.integrate import simps
+from scipy.integrate import simpson
 ###### NOTE: If you have a more recent version of python/SciPy the 
 # relevant function is "simpson".  You will need to replace "simps" 
 # with "simpson" wherever it appears. 
@@ -247,7 +247,7 @@ class CosmologicalTools:
         # Integrate y numerically over zrange and return in units of Gyr
         # FILL THIS IN 
         # for whatever reason simps gets rid of the units so you have to add them back. 
-        time = simps(y,zrange)*u.Gyr
+        time = simpson(y,zrange)*u.Gyr
 
         return time
     
@@ -287,7 +287,7 @@ class CosmologicalTools:
     
         
         # Integrate y numerically over zrange and return in units of Mpc 
-        DC = simps(y,zrange)*u.Mpc
+        DC = simpson(y,zrange)*u.Mpc
         
         return DC
     

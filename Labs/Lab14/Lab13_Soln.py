@@ -287,7 +287,7 @@ class CosmologicalTools:
     
         
         # Integrate y numerically over zrange and return in units of Mpc 
-        DC = simps(y,zrange)*u.Mpc
+        DC = simpson(y,zrange)*u.Mpc
         
         return DC
     
